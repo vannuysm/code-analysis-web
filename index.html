@@ -59,13 +59,14 @@
         }
 
         .app-container {
-            width: 400px;
+            width: 465px;
             margin: 0 auto 0 auto;
         }
 
         .image {
             width: 100px;
             height: 100px;
+            object-fit: cover;
         }
 
         .list-container {
@@ -129,7 +130,7 @@
 
          function formatHeadshotUrl(url) {
              if (url == null || url === '') {
-                 return '';
+                 return 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mm&f=y&s=100';
              }
 
              return `https:${url}`;
