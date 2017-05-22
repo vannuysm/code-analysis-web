@@ -156,6 +156,17 @@
         }
 
         /**
+         * Remove any people that do not have the name we are
+         * searching for.
+         */
+        function filterByName(searchForName, personList) {
+            return personList.filter((person) => {
+                let name = `${person.firstName} ${person.lastName}`.toUpperCase();
+                return name.indexOf(searchForName.toUpperCase()) > -1;
+            });
+        }
+
+        /**
          * Takes in a property of an object list, e.g. "name" below
          *
          *    people = [{ name: 'Sam' }, { name: 'Jon' }, { name: 'Kevin' }]
