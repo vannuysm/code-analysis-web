@@ -44,9 +44,12 @@
      add in a build step if you wish. This is NOT strictly required.
 
    -->
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<!DOCTYPE html>
 <html>
     <head>
+        <meta charset="UTF-8">
+
         <title>Single Page Application</title>
 
         <style>
@@ -108,8 +111,8 @@
                         reject(new Error("Error!"));
                     }
 
-                    response.json().then((imageList) => {
-                        resolve(imageList);
+                    response.json().then((peopleList) => {
+                        resolve(peopleList);
                     });
                 });
             });
@@ -124,11 +127,31 @@
 
 
         function getLastName(fullName) {
-            return fullName.match(/\w+/g)[1];
+            if (fullName == null) {
+                return '';
+            }
+
+            let nameParts = fullName.split(' ');
+
+            if (nameParts.length === 1) {
+                return '';
+            }
+
+            return nameParts.slice(-1).join(' ');
         }
 
-        const getFirstName = (fullName) => {
-            return fullName.match(/\w+/g)[0];
+        function getFirstName(fullName) {
+            if (fullName == null) {
+                return '';
+            }
+
+            let nameParts = fullName.split(' ');
+
+            if (nameParts.length === 0) {
+                return '';
+            }
+
+            return fullName.split(' ')[0];
         };
 
         /**
@@ -136,15 +159,15 @@
          */
         function shuffleList(list) {
             // Make a copy & don't mutate the passed in list
-            let result = list.slice(1);
+            let result = list.slice(0);
 
-            let tmp, j, i = list.length - 1
+            let tmp, j, i = result.length - 1
 
             for (; i > 0; i -= 1) {
                 j = Math.floor(Math.random() * (i + 1));
-                tmp = list[i];
-                list[i] = list[j];
-                list[j] = tmp;
+                tmp = result[i];
+                result[i] = result[j];
+                result[j] = tmp;
             }
 
             return result;
@@ -157,10 +180,14 @@
          */
         function filterByName(searchForName, personList) {
             return personList.filter((person) => {
-                return person.name === searchForName;
+                return person.name.toUpperCase().indexOf(searchForName.toUpperCase()) > -1;
             });
         }
 
+        const NameSortType = Object.freeze({
+            firstName: 0,
+            lastName: 1
+        });
 
         /**
          * Takes in a property of an object list, e.g. "name" below
@@ -178,30 +205,45 @@
          *    > [{ name: 'Jon' }, { name: 'Kevin' }, { name: 'Sam' }]
          *
          */
-        function sortObjListByProp(prop) {
+        function sortByName(type) {
+            if (type == null) {
+                throw new Error("Invalid sort type for sortByName");
+            }
+
             return function(objList) {
                 // Make a copy & don't mutate the passed in list
-                let result = objList.slice(1);
+                let result = objList.slice(0);
 
                 result.sort((a, b) => {
-                    if (a[prop] < b[prop]) {
+                    let aName,
+                        bName;
+
+                    if (type === NameSortType.lastName) {
+                        aName = getLastName(a['name']).toUpperCase();
+                        bName = getLastName(b['name']).toUpperCase();
+                    }
+                    else {
+                        aName = getFirstName(a['name']).toUpperCase();
+                        bName = getFirstName(b['name']).toUpperCase();
+                    }
+
+                    if (aName < bName) {
                         return -1;
                     }
 
-                    if (a[prop] > b[prop]) {
+                    if (aName > bName) {
                         return 1;
                     }
 
-                    return 1;
+                    return 0;
                 });
 
                 return result;
             };
         }
 
-        const sortByFirstName = sortObjListByProp('name');
-
-        const sortByLastName = (personList) => sortByFirstName(personList).reverse();
+        const sortByFirstName = sortByName(NameSortType.firstName);
+        const sortByLastName = sortByName(NameSortType.lastName);
 
 
         /*==================================================
