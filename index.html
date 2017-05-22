@@ -127,6 +127,14 @@
 
          ***************************************************/
 
+         function formatHeadshotUrl(url) {
+             if (url == null || url === '') {
+                 return '';
+             }
+
+             return `https:${url}`;
+         }
+
         /**
          * Fisher-Yates shuffle
          */
@@ -205,7 +213,7 @@
         });
 
         const ListRow = (props) => React.DOM.tr({ key: props.person.name }, [
-            React.DOM.td({ key: 'thumb' }, React.createElement(Thumbnail, { src: props.person.url })),
+            React.DOM.td({ key: 'thumb' }, React.createElement(Thumbnail, { src: formatHeadshotUrl(props.person.headshot.url) })),
             React.DOM.td({ key: 'first' }, null, props.person.firstName),
             React.DOM.td({ key: 'last' }, null, props.person.lastName),
         ]);
