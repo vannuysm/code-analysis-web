@@ -115,7 +115,7 @@
                     }
 
                     response.json().then((peopleList) => {
-                        resolve(peopleList.items);
+                        resolve(sortByFirstName(peopleList.items));
                     });
                 });
             });
